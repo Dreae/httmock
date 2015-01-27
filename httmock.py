@@ -101,6 +101,7 @@ class HTTMock(object):
 
     def __init__(self, *handlers):
         self.handlers = handlers
+        self.call_count = 0
 
     def __enter__(self):
         self._real_session_send = requests.Session.send
@@ -160,6 +161,7 @@ class HTTMock(object):
         requests.Session.prepare_request = self._real_session_prepare_request
 
     def intercept(self, request):
+        self.call_count += 1
         url = urlparse.urlsplit(request.url)
         res = first_of(self.handlers, url, request)
         if isinstance(res, requests.Response):
